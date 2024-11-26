@@ -3,7 +3,7 @@ import torch
 import numpy as np
 
 
-device_type = 'cuda' if torch.cuda.is_available() else 'cpu'
+device_type = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
 device = torch.device(device_type)
 data_dir = os.path.join(os.path.dirname(__file__))
 batch_size = 64

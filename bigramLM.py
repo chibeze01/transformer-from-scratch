@@ -1,7 +1,6 @@
 from train import get_batch, device, eval_iters, n_embd, block_size, n_heads, dropout, n_layers, max_iters, learning_rate
 from prepare import decode, encode, vocab_size
 import torch
-import matplotlib.pyplot as plt
 
 class Head(torch.nn.Module):
     ''' single attention head'''
@@ -154,5 +153,4 @@ for i in range(max_iters):
 
 
 
-
-# print(decode(model.generate(torch.zeros((1,1), dtype=torch.long, device=device), 10000)[0].tolist())) # generate some 10,000 char shakespeare
+print(decode(model.generate(torch.zeros((1,1), dtype=torch.long, device=device), 10000)[0].tolist())) # generate some 10,000 char shakespeare
