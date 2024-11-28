@@ -5,11 +5,11 @@ import torch
 class Head(torch.nn.Module):
     ''' single attention head'''
 
-    def __init__(self, n_embd):
+    def __init__(self, head_size):
         super().__init__()
-        self.key = torch.nn.Linear(n_embd, n_embd)
-        self.query = torch.nn.Linear(n_embd, n_embd)
-        self.value = torch.nn.Linear(n_embd, n_embd)
+        self.key = torch.nn.Linear(n_embd, head_size, bias=False)
+        self.query = torch.nn.Linear(n_embd, head_size, bias=False)
+        self.value = torch.nn.Linear(n_embd, head_size, bias=False)
         self.register_buffer('mask', torch.tril(torch.ones(block_size, block_size)))
         self.dropout = torch.nn.Dropout(dropout)
 
@@ -68,13 +68,10 @@ class Block(torch.nn.Module):
         x = x + self.FFN(self.norm2(x))
         return x
     
-class BigramLM(torch.nn.Module):
+class TransformerLM(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.embedding = torch.nn.Embedding(vocab_size, n_embd) # b t c
-        self.sa_head = Head(n_embd)
-        self.multiHeadAttention = multiHeadAttention(n_heads, n_embd//n_heads)
-        self.FFN = FFN(n_embd)
         self.lm_head = torch.nn.Linear(n_embd, vocab_size)
         self.blocks = torch.nn.Sequential(
             *[Block(n_embd, n_heads) for _ in range(n_layers)],
@@ -114,7 +111,7 @@ class BigramLM(torch.nn.Module):
             idx = torch.cat([idx, next_idx], dim=1) # (B T+1)
         return idx
     
-model = BigramLM()
+model = TransformerLM()
 model = model.to(device)
 
 @torch.no_grad()
